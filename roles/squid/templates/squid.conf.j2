@@ -1,17 +1,13 @@
 # Este fichero es administrado por ANSIBLE. Cualquier cambio
 # ser'a sustituido por el config de ansible squid.conf.j2
-# Created 20-06-25
-# Update 12-07-25 ...
-{# De esta forma los comentario no se muestran en el fichero conf #}
-
-{% if inventory_hostname == "encc132.encc.cupet.cu" %}
+{% if inventory_hostname == "proxy_hijo" %}
 http_port {{ squid_http_port_hijo }}
-{% elif inventory_hostname == "proxy69.encc.cupet.cu" %}
-http_port {{ squid_http_port_padre }}
-{% elif inventory_hostname == "proxy130.encc.cupet.cu" %}
+{% elif inventory_hostname == "proxy_padre1" %}
 http_port {{ squid_http_port_padre1 }}
-{% elif inventory_hostname == "proxy196.encc.cupet.cu" %}
+{% elif inventory_hostname == "proxy_padre2" %}
 http_port {{ squid_http_port_padre2 }}
+{% elif inventory_hostname == "proxy_padre3" %}
+http_port {{ squid_http_port_padre3 }}
 {% endif %}
 
 # Nombre a mostrar
