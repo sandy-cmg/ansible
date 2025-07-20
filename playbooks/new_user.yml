@@ -1,0 +1,59 @@
+---
+- name: Crear usuario local y configurar clave SSH
+  hosts: all
+  become: true
+  vars:
+      user: ansible
+
+  tasks:
+
+      - name: Verificar usuario
+        ansible.builtin.stat:
+            path: "/home/{{ user }}"
+        register: usuario
+
+      - name: Usuario existente
+        ansible.builtin.debug:
+            msg: "*** El Usuario Existe ***"
+        when: usuario.stat.exists
+
+      - name: Usuario no existente
+        ansible.builtin.debug:
+            msg: "*** El Usuario no Existe ***"
+        when: not usuario.stat.exists
+
+      - name: Crear usuario
+        ansible.builtin.include_tasks: /etc/ansible/tasks/new_user.yml
+        when: not usuario.stat.exists
+
+      - name: "Generate SSH key for Ansible user"
+        ansible.builtin.include_tasks: /etc/ansible/tasks/ssh_key.yml
+        when: ansible_hostname == "encc132"
+
+      - name: Transferir llaves
+        ansible.builtin.stat:
+            path: /home/{{ user }}/.ssh/authorized_keys
+        register: transfer
+
+      - name: No existen las llaves
+        ansible.builtin.debug:
+            msg: " *** no existen las llaves *** "
+        when: not transfer.stat.exists and ansible_hostname != "encc132"
+
+      - name: Transferir llave publica a host remoto
+        ansible.posix.authorized_key:
+            user: "{{ user }}"
+            state: present
+            key: "{{ lookup('file', '/home/{{ user }}/.ssh/id_rsa.pub') }}"
+        when: not transfer.stat.exists and ansible_hostname != "encc132"
+
+      - name: Permiso sudo si existe usuario
+        ansible.builtin.lineinfile:
+            path: /etc/sudoers
+            state: present
+            regexp: "^{{ user }}"
+            line: "{{ user }} ALL=(ALL) NOPASSWD:ALL"
+            backup: true
+            validate: '/usr/sbin/visudo -cf %s'
+        when: usuario.stat.exists
+...

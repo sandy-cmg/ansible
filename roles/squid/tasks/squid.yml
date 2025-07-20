@@ -1,0 +1,7 @@
+---
+- name: Installing squid
+  ansible.builtin.apt:
+     name: squid
+     state: present
+  become: true
+...

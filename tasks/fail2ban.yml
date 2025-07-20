@@ -1,0 +1,8 @@
+---
+- name: Instalar fail2ban e iptables
+  ansible.builtin.apt:
+     name:
+        - fail2ban
+        - iptables
+     state: present
+...

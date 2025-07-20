@@ -1,0 +1,58 @@
+---
+- name: Despliegue_fail2ban
+  hosts: all
+  become: true
+
+  vars_files:
+     - /etc/ansible/vars/proxy.yml
+     - /etc/ansible/vars/fail2ban_postfix_jails.yml
+     - /etc/ansible/vars/fail2ban_ssh_jails.yml
+  vars:
+     src_templates: /etc/ansible/templates/jail.local.j2
+     dst_templates: /etc/fail2ban/jail.local
+
+  tasks:
+
+     - name: Instalar iptables/fail2ban sin proxy
+       ansible.builtin.include_tasks: ../tasks/fail2ban.yml
+       when: inventory_hostname in groups['without_proxy']
+
+     - name: Instalar iptables/fail2ban con proxy
+       ansible.builtin.include_tasks: ../tasks/fail2ban.yml
+       args:
+          apply:
+             environment:
+                http_proxy: "{{ proxy_encc }}"
+       when: inventory_hostname in groups['with_proxy']
+
+     - name: Desabilito chequeo de correo si no es Mailad y Mailbackup
+       ansible.builtin.template:
+          src: "{{ src_templates }}"
+          dest: "{{ dst_templates }}"
+          force: true
+          mode: "0600"
+       vars:
+          f2bpostfixenabled: false
+       when: inventory_hostname != "mailad.encc.cupet.cu" and inventory_hostname != "mailbackup.encc.cupet.cu"
+       notify:
+          - Restart fail2ban
+
+     - name: Habilito chequeo de correo si es Mailad y Mailbackup
+       ansible.builtin.template:
+          src: "{{ src_templates }}"
+          dest: "{{ dst_templates }}"
+          force: true
+          mode: "0600"
+       vars:
+          f2bpostfixenabled: true
+       when: inventory_hostname == "mailad.encc.cupet.cu" or inventory_hostname == "mailbackup.encc.cupet.cu"
+       notify:
+          - Restart fail2ban
+
+  handlers:
+     - name: Restart fail2ban
+       ansible.builtin.service:
+          name: fail2ban
+          state: restarted
+       become: true
+...

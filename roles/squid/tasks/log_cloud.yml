@@ -1,0 +1,48 @@
+---
+# Crear el directorio de los log
+# El contenido del directorio LOG ser'an las provincias
+# ansible.builtin.file gestiona archivos, directorios y enlaces simbólicos
+# ansible.builtin.stat obtiene información de archivo/directorio sin modificarlo
+
+- name: Creamos la carpeta si no existe
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ squid_cloud_path }}/gtm"
+    - "{{ squid_cloud_path }}/stg"
+    - "{{ squid_cloud_path }}/hlg"
+    - "{{ squid_cloud_path }}/grm"
+    - "{{ squid_cloud_path }}/ltu"
+    - "{{ squid_cloud_path }}/cmg"
+    - "{{ squid_cloud_path }}/cav"
+    - "{{ squid_cloud_path }}/ssp"
+    - "{{ squid_cloud_path }}/vcl"
+    - "{{ squid_cloud_path }}/cfg"
+    - "{{ squid_cloud_path }}/mtz"
+    - "{{ squid_cloud_path }}/enc"
+    - "{{ squid_cloud_path }}/pri"
+    - "{{ squid_cloud_path }}/isj"
+
+- name: Copiamos los log para la nube
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: '0755'
+  loop:
+    - {src: '{{ squid_log_path }}/gtm/', dest: '{{ squid_cloud_path }}/gtm/'}
+    - {src: '{{ squid_log_path }}/stg/', dest: '{{ squid_cloud_path }}/stg/'}
+    - {src: '{{ squid_log_path }}/hlg/', dest: '{{ squid_cloud_path }}/hlg/'}
+    - {src: '{{ squid_log_path }}/grm/', dest: '{{ squid_cloud_path }}/grm/'}
+    - {src: '{{ squid_log_path }}/ltu/', dest: '{{ squid_cloud_path }}/ltu/'}
+    - {src: '{{ squid_log_path }}/cmg/', dest: '{{ squid_cloud_path }}/cmg/'}
+    - {src: '{{ squid_log_path }}/cav/', dest: '{{ squid_cloud_path }}/cav/'}
+    - {src: '{{ squid_log_path }}/ssp/', dest: '{{ squid_cloud_path }}/ssp/'}
+    - {src: '{{ squid_log_path }}/vcl/', dest: '{{ squid_cloud_path }}/vcl/'}
+    - {src: '{{ squid_log_path }}/cfg/', dest: '{{ squid_cloud_path }}/cfg/'}
+    - {src: '{{ squid_log_path }}/mtz/', dest: '{{ squid_cloud_path }}/mtz/'}
+    - {src: '{{ squid_log_path }}/enc/', dest: '{{ squid_cloud_path }}/enc/'}
+    - {src: '{{ squid_log_path }}/pri/', dest: '{{ squid_cloud_path }}/pri/'}
+    - {src: '{{ squid_log_path }}/isj/', dest: '{{ squid_cloud_path }}/isj/'}
+...

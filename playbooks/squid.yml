@@ -1,0 +1,54 @@
+---
+- name: Squid
+  hosts: all
+  become: true
+  gather_facts: false
+  vars_files:
+     - /etc/ansible/vars/proxy.yml
+  environment:
+     http_proxy: "{{ proxy_encc }}"
+
+  tasks:
+     - name: Install squid from roles
+       ansible.builtin.include_role:
+          name: squid
+          tasks_from: "{{ items }}"
+       loop:
+          - squid.yml
+          - log_provincias.yml
+       loop_control:
+          loop_var: items
+       when: inventory_hostname == "encc132.encc.cupet.cu"
+
+# Por defecto loop_var toma como valor la palabra "item"
+# si no se tiene que especificar, pues tampoco se tiene que definir.
+# pero para nuestro caso como ya esta puesta en otro lugar, pues si
+# tenemos que especificarla, como se explica a continuaci'on
+# Aclarar que se uso la palabra "items" terminado en S por que
+# ya en las tareas en log_provincia se usa la palabra "item"
+# en singular, y el modulo "loop" si ve que ya se usa da un
+# warning de que otra tarea la esta usando, esto solamente es
+# para el loop, por eso se pone un control del loop con la
+# variable loop_var, para especificar que usara otro nombre
+# Todo esto nos sirve para especificar que la tarea correra
+# solamente en las tasks especificadas aqui cuando son mas
+# de una la que se quiere correr.
+# -----------------------------------------------------------
+# Otra forma de hacer lo anterior
+# name: Install squid from roles
+# ansible.builtin.include_role:
+# name: squid
+# when: inventory_hostname == "encc132.encc.cupet.cu"
+# En este caso no usamos el task_from por que vamos a correr
+# dos tareas, y por defecto cuando no se especifica el busca
+# en /role/squid/tasks/main.yml, solamente en este fichero
+# debemos poner donde estan dichas tareas
+# ver fichero para refferencia.
+# -----------------------------------------------------------
+     - name: Configurar proxy
+       ansible.builtin.include_role:
+          name: squid
+          tasks_from: squid_conf.yml
+       # El task_from viene explicado en mis documentos.
+       when: (inventory_hostname != "proxy197.encc.cupet.cu") and (inventory_hostname in groups['without_proxy'] or inventory_hostname == "encc132.encc.cupet.cu")
+...

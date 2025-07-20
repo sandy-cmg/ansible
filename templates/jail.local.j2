@@ -1,0 +1,85 @@
+#
+
+# ****** ACTUALIZADO 29-5-2025  *******
+
+[INCLUDES]
+
+before = paths-debian.conf
+
+[DEFAULT]
+
+ignorecommand =
+bantime  = 60m
+findtime  = 10m
+maxretry = 2
+maxmatches = %(maxretry)s
+backend = auto
+usedns = warn
+logencoding = auto
+enabled = false
+mode = normal
+filter = %(__name__)s[mode=%(mode)s]
+destemail = root@localhost
+sender = root@<fq-hostname>
+mta = sendmail
+protocol = tcp
+chain = <known/chain>
+port = 0:65535
+fail2ban_agent = Fail2Ban/%(fail2ban_version)s
+banaction = iptables-multiport
+banaction_allports = iptables-allports
+action_ = %(banaction)s[port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+action_mw = %(action_)s
+action_mwl = %(action_)s
+             %(mta)s-whois-lines[sender="%(sender)s", dest="%(destemail)s", logpath="%(logpath)s", chain="%(chain)s"]
+action_xarf = %(action_)s
+             xarf-login-attack[service=%(__name__)s, sender="%(sender)s", logpath="%(logpath)s", port="%(port)s"]
+action_cf_mwl = cloudflare[cfuser="%(cfemail)s", cftoken="%(cfapikey)s"]
+                %(mta)s-whois-lines[sender="%(sender)s", dest="%(destemail)s", logpath="%(logpath)s", chain="%(chain)s"]
+action_blocklist_de  = blocklist_de[email="%(sender)s", service="%(__name__)s", apikey="%(blocklist_de_apikey)s", agent="%(fail2ban_agent)s"]
+action_abuseipdb = abuseipdb
+action = %(action_)s
+
+# =========
+#
+# JAILS
+#
+# =========
+
+# -- 29-5-2025 --
+# ================================
+
+[postfix]
+
+enabled  =  {{ f2bpostfixenabled }}
+mode     =  {{ f2bpostfixmode }}
+ignoreip =  {{ f2bpostfixignoreip }}
+filter   =  {{ f2bpostfixfilter }}
+logpath  =  {{ f2bpostfixlogpath }}
+backend  =  {{ f2bpostfixbackend }}
+maxretry =  {{ f2bpostfixmaxretry }}
+findtime =  {{ f2bpostfixfindtime }}
+bantime  =  {{ f2bpostfixbantime }}
+
+[postfix-auth]
+
+enabled  =  {{ f2bpostfixenabled }}
+ignoreip =  {{ f2bpostfixignoreip }}
+filter   =  {{ f2bpostfixfilter }}
+logpath  =  {{ f2bpostfixlogpath }}
+backend  =  {{ f2bpostfixbackend }}
+findtime =  {{ f2bpostfixfindtime }}
+maxretry =  {{ f2bpostfixmaxretry }}
+bantime  =  {{ f2bpostfixbantime }}
+# --------
+
+[sshd]
+
+enabled  =  {{ f2bsshenabled }}
+port     =  {{ f2bsshport }}
+filter   =  {{ f2bsshfilter }}
+maxretry =  {{ f2bsshmaxretry }}
+logpath  =  {{ f2bsshlogpath }}
+ignoreip =  {{ f2bsshignoreip }}
+
+# ============================================

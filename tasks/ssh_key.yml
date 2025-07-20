@@ -1,0 +1,11 @@
+---
+- name: "Generar SSH Key"
+  ansible.builtin.user:
+            name: ansible
+            generate_ssh_key: true
+            ssh_key_type: rsa
+            ssh_key_bits: 4096
+            ssh_key_file: /home/{{ user }}/.ssh/id_rsa
+            force: false
+            comment: clave privada (id_rsa ) y p'ublica (id_rsa.pub)
+...

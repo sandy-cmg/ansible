@@ -1,0 +1,108 @@
+# Este fichero es administrado por ANSIBLE. Cualquier cambio
+# ser'a sustituido por el config de ansible squid.conf.j2
+# Created 20-06-25
+# Update 12-07-25 ...
+{# De esta forma los comentario no se muestran en el fichero conf #}
+
+{% if inventory_hostname == "encc132.encc.cupet.cu" %}
+http_port {{ squid_http_port_hijo }}
+{% elif inventory_hostname == "proxy69.encc.cupet.cu" %}
+http_port {{ squid_http_port_padre }}
+{% elif inventory_hostname == "proxy130.encc.cupet.cu" %}
+http_port {{ squid_http_port_padre1 }}
+{% elif inventory_hostname == "proxy196.encc.cupet.cu" %}
+http_port {{ squid_http_port_padre2 }}
+{% endif %}
+
+# Nombre a mostrar
+visible_hostname {{ squid_visible }}
+logformat squid {{ squid_logformat }}
+
+{% if inventory_hostname == "encc132.encc.cupet.cu" %}
+# Definir las cache valido solamente para los hijos
+cache_peer {{ squid_cache_peer_hostname1 }} {{ squid_cache_peer_type }} {{ squid_http_port_padre2 }} {{ squid_cache_peer_icpport }} {{ squid_cache_peer_options }}
+cache_peer {{ squid_cache_peer_hostname2 }} {{ squid_cache_peer_type }} {{ squid_http_port_padre1 }} {{ squid_cache_peer_icpport }} {{ squid_cache_peer_options }}
+cache_peer {{ squid_cache_peer_hostname3 }} {{ squid_cache_peer_type }} {{ squid_http_port_padre }} {{ squid_cache_peer_icpport }} {{ squid_cache_peer_options }}
+{% endif %}
+
+{% if inventory_hostname == "encc132.encc.cupet.cu" %}
+# Separar LOG por provincias
+# Definir bloques IP por cada una de ellas
+acl gtm src {{ squid_provincias['gtm'] }}
+acl stg src {{ squid_provincias['stg'] }}
+acl hlg src {{ squid_provincias['hlg'] }}
+acl grm src {{ squid_provincias['grm'] }}
+acl ltu src {{ squid_provincias['ltu'] }}
+acl cmg src {{ squid_provincias['cmg'] }}
+acl cav src {{ squid_provincias['cav'] }}
+acl ssp src {{ squid_provincias['ssp'] }}
+acl vcl src {{ squid_provincias['vcl'] }}
+acl cfg src {{ squid_provincias['cfg'] }}
+acl mtz src {{ squid_provincias['mtz'] }}
+acl enc src {{ squid_provincias['enc'] }}
+acl pri src {{ squid_provincias['pri'] }}
+acl isj src {{ squid_provincias['isj'] }}
+{% endif %}
+
+# Mantengo el fichero access.log original en su ubicaci'on
+cache_access_log /var/log/squid/access.log
+
+{% if inventory_hostname == "encc132.encc.cupet.cu" %}
+# Almacenar los log en sus respectivos ficheros.
+cache_access_log {{ squid_log_path }}/gtm/gtm.log  squid gtm
+cache_access_log {{ squid_log_path }}/stg/stg.log  squid stg
+cache_access_log {{ squid_log_path }}/hlg/hlg.log  squid hlg
+cache_access_log {{ squid_log_path }}/grm/grm.log  squid grm
+cache_access_log {{ squid_log_path }}/ltu/ltu.log  squid ltu
+cache_access_log {{ squid_log_path }}/cmg/cmg.log  squid cmg
+cache_access_log {{ squid_log_path }}/cav/cav.log  squid cav
+cache_access_log {{ squid_log_path }}/ssp/ssp.log  squid ssp
+cache_access_log {{ squid_log_path }}/vcl/vcl.log  squid vcl
+cache_access_log {{ squid_log_path }}/cfg/cfg.log  squid cfg
+cache_access_log {{ squid_log_path }}/mtz/mtz.log  squid mtz
+cache_access_log {{ squid_log_path }}/enc/enc.log  squid enc
+cache_access_log {{ squid_log_path }}/pri/pri.log  squid pri
+cache_access_log {{ squid_log_path }}/isj/isj.log  squid isj
+{% endif %}
+
+# Opciones generales
+include {{ squid_include_path }}/opciones_squid.conf
+
+{% if inventory_hostname in groups['without_proxy'] and inventory_hostname != "proxy197.encc.cupet.cu" %}
+# Acls para proxy padre
+{%   for acl in squid_acl_padre %}
+acl {{ acl.name }} {{ acl.type }} {{ acl.arg }}
+{%   endfor %}
+{% endif %}
+
+{% if inventory_hostname in groups['without_proxy'] and inventory_hostname != "proxy197.encc.cupet.cu" %}
+{%   for http_access in squid_http_access_padre %}
+http_access {{ http_access.state }} {{ http_access.acl }}
+{%   endfor %}
+{% endif %}
+
+{% if inventory_hostname == "encc132.encc.cupet.cu" %}
+# Acls para las provincias
+include {{ squid_include_path }}/dstdomain.conf
+{% endif %}
+
+{% if inventory_hostname == "encc132.encc.cupet.cu" %}
+# Auntenticacion kerberos para proxys hijos
+# External ACls para las provincias auth kerberos
+auth_param negotiate program /usr/lib/squid/negotiate_kerberos_auth -d -s HTTP/{{ squid_kerberos_host }}@{{ squid_kerberos_realm }}
+auth_param negotiate children 20 startup=0 idle=1
+auth_param negotiate keep_alive on
+acl auth proxy_auth REQUIRED
+
+include {{ squid_include_path }}/kerberos.conf
+{% endif %}
+
+# Para todos
+include {{ squid_include_path }}/otras.conf
+
+{% if inventory_hostname == "encc132.encc.cupet.cu" %}
+# siempre reevia peticiones directo a servidores origen. No se envian al proxy padre.
+# always_direct deny all
+# Siempre usa proxy padre para reenviar las peticiones, no se permiten conexiones directas
+never_direct allow all
+{% endif %}

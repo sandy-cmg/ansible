@@ -1,0 +1,10 @@
+---
+f2bpostfixmode: "more"
+f2bpostfixignoreip: 127.0.0.1 10.16.2.3 10.16.2.8 10.16.2.9 172.16.21.0/24 172.18.82.106
+f2bpostfixfilter: "postfix[mode=auth]"
+f2bpostfixlogpath: '%(postfix_log)s'
+f2bpostfixbackend: '%(postfix_backend)s'
+f2bpostfixmaxretry: 3
+f2bpostfixfindtime: 600
+f2bpostfixbantime: 3600
+...

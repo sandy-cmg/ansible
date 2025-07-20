@@ -1,0 +1,5 @@
+---
+- ansible.builtin.include_tasks: new_user.yml
+- ansible.builtin.include_tasks: ssh_key.yml
+- ansible.builtin.include_tasks: fail2ban.yml
+...

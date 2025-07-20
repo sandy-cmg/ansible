@@ -1,0 +1,17 @@
+---
+- name: borrar y empezar de cero
+  hosts: all
+  become: true
+  gather_facts: false
+  vars:
+    user: ansible
+  tasks:
+    - name: Eliminar el usuario '{{ user }}'
+      ansible.builtin.user:
+        name: "{{ user }}"
+        state: absent
+        remove: true
+    - name: Eliminar el directorio '/home/{{ user }}'
+      ansible.builtin.file:
+        path: /home/{{ user }}
+        state: absent

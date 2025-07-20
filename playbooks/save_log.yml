@@ -1,0 +1,26 @@
+---
+- name: Save log to nextcloud
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+
+     - name: Stop the service
+       ansible.builtin.service:
+          name: squid
+          state: stopped
+       when: inventory_hostname == "encc132.encc.cupet.cu"
+
+     - name: Copiar los log para nextcloud
+       ansible.builtin.include_role:
+          name: squid
+          tasks_from: log_cloud.yml
+       when: inventory_hostname == "nextcloud.encc.cupet.cu"
+
+     - name: Start the service
+       ansible.builtin.service:
+          name: squid
+          state: started
+       when: inventory_hostname == "encc132.encc.cupet.cu"
+...

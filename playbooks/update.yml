@@ -1,0 +1,27 @@
+---
+- name: "Actualizar SO"
+  hosts: all
+  become: true
+  vars_files:
+        - /etc/ansible/vars/proxy.yml
+
+  tasks:
+        - name: "Update/Upgrade con Proxy"
+          environment:
+                http_proxy: "{{ proxy_encc }}"
+                https_proxy: "{{ proxy_encc }}"
+          ansible.builtin.apt:
+                update_cache: true
+                upgrade: dist
+                autoremove: true
+          when:
+                - inventory_hostname in groups['with_proxy']
+
+        - name: "Update/Upgrade sin Proxy"
+          ansible.builtin.apt:
+                update_cache: true
+                upgrade: dist
+                autoremove: true
+          when:
+                - inventory_hostname in groups['without_proxy']
+...
