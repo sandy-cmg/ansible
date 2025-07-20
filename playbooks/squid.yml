@@ -34,11 +34,11 @@
 # solamente en las tasks especificadas aqui cuando son mas
 # de una la que se quiere correr.
 # -----------------------------------------------------------
-# Otra forma de hacer lo anterior
+# Otra forma de hacer lo anterior puede ser:
 # name: Install squid from roles
 # ansible.builtin.include_role:
 # name: squid
-# when: inventory_hostname == "encc132.encc.cupet.cu"
+# when: inventory_hostname == "servidor_ansible"
 # En este caso no usamos el task_from por que vamos a correr
 # dos tareas, y por defecto cuando no se especifica el busca
 # en /role/squid/tasks/main.yml, solamente en este fichero
@@ -50,5 +50,8 @@
           name: squid
           tasks_from: squid_conf.yml
        # El task_from viene explicado en mis documentos.
-       when: (inventory_hostname != "proxy197.encc.cupet.cu") and (inventory_hostname in groups['without_proxy'] or inventory_hostname == "encc132.encc.cupet.cu")
+       when: inventory_hostname == "Todos_los_proxy"
+       # Aclarar que el role del squid se configuro en un solo fichero,
+       # donde se separan por condiciones (if) las que son para proxys padres e hijos,
+       # hay muchas forma de realizar este role, esta es una de ella.
 ...
