@@ -5,7 +5,7 @@
     name: ansible
     shell: /bin/bash
     create_home: true
-    password: $6$KzW0NBwh15k2UqR4$/vLpELVS.TRIfJrFv4VYVTdmfkkZ.QJJF6AixMrjRmvaL1Okxc2D3X19.nzX/99hJdRhrxe7ncwwUyO0SGcqw1
+    password: password
     groups: sudo
     append: true
     comment: Usuario para correr playbook de ansible
