@@ -4,4 +4,5 @@ Se usara ansible como herramienta de automatización para algunos servicios bás
 -	Configuración de fail2ban para la prevención de ataques remoto, inicialmente para los servicios de ssh y correo.
 -	Despliegue de servidores proxy (Padres e Hijos) con funcionalidad de Round Robin.
 -	Actualización de sistemas operativos.
+
 De forma general los proxy trabajan en la combinación padres/hijos, los hijos usan Round Robin para las peticiones a sus padres, se usó un solo role, aunque hay miles de forma de hacer esta tarea, decidí hacerlo de esta vía, en la definición de las variables se especifica claramente de donde es cada una y a través de las condiciones en el fichero de configuración igual se aclara.
