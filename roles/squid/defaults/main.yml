@@ -8,9 +8,9 @@ squid_logformat: "%9d.%03d %6d %s %s/%03d %d %s %s %s %s%s/%s %s"
 # Puertos usados en los proxys
 # igual se puede usar el mismo para todos
 squid_http_port_hijo: 3128
-squid_http_port_padre: 3129
-squid_http_port_padre1: 3130
-squid_http_port_padre2: 3131
+squid_http_port_padre1: 3129
+squid_http_port_padre2: 3130
+squid_http_port_padre3: 3131
 
 # ---------------------------------------------------------------------------------
 # Solo para proxy hijo
