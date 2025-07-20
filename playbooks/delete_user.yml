@@ -1,5 +1,5 @@
 ---
-- name: borrar y empezar de cero
+- name: borrar usuario ansible
   hosts: all
   become: true
   gather_facts: false
