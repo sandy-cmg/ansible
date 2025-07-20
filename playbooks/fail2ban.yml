@@ -12,7 +12,6 @@
      dst_templates: /etc/fail2ban/jail.local
 
   tasks:
-
      - name: Instalar iptables/fail2ban sin proxy
        ansible.builtin.include_tasks: ../tasks/fail2ban.yml
        when: inventory_hostname in groups['without_proxy']
@@ -25,7 +24,10 @@
                 http_proxy: "{{ proxy_encc }}"
        when: inventory_hostname in groups['with_proxy']
 
-     - name: Desabilito chequeo de correo si no es Mailad y Mailbackup
+     # Aqui estamos poniendo la varible f2bpostfixenable en falso
+     # Es decir, en aquellos servidores que NO sean de correo, pues 
+     # fal2ban para postfix no se habilita
+     - name: Desabilito chequeo de correo si no es servidor de correo
        ansible.builtin.template:
           src: "{{ src_templates }}"
           dest: "{{ dst_templates }}"
@@ -33,11 +35,11 @@
           mode: "0600"
        vars:
           f2bpostfixenabled: false
-       when: inventory_hostname != "mailad.encc.cupet.cu" and inventory_hostname != "mailbackup.encc.cupet.cu"
+       when: inventory_hostname != "servidor_correo"
        notify:
           - Restart fail2ban
 
-     - name: Habilito chequeo de correo si es Mailad y Mailbackup
+     - name: Habilito chequeo si es servidor de correo
        ansible.builtin.template:
           src: "{{ src_templates }}"
           dest: "{{ dst_templates }}"
@@ -45,7 +47,7 @@
           mode: "0600"
        vars:
           f2bpostfixenabled: true
-       when: inventory_hostname == "mailad.encc.cupet.cu" or inventory_hostname == "mailbackup.encc.cupet.cu"
+       when: inventory_hostname == "servidor_correo"
        notify:
           - Restart fail2ban
 
