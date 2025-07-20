@@ -1,10 +1,12 @@
 ---
-# Variables comunes para ambos
-
+# Aquí se declararan las variables utilizadas an en los proxy padre e hijos 
+# Variables comunes para ambos proxys
+# En 
 squid_visible: NOT-SHOW-FOR-NOW
 squid_logformat: "%9d.%03d %6d %s %s/%03d %d %s %s %s %s%s/%s %s"
 
-# Puertos para conexion
+# Puertos usados en los proxys
+# igual se puede usar el mismo para todos
 squid_http_port_hijo: 3128
 squid_http_port_padre: 3129
 squid_http_port_padre1: 3130
@@ -14,22 +16,24 @@ squid_http_port_padre2: 3131
 # Solo para proxy hijo
 
 # Autenticaci'on kerberos
-squid_kerberos_host: encc132.encc.cupet.cu
-squid_kerberos_realm: ENCC.CUPET.CU
+squid_kerberos_host: fqdn_del_servidor_proxy
+squid_kerberos_realm: DOMINIO
 
 # Cache_peer proxy hijo
-squid_cache_peer_hostname1: 172.16.21.196
-squid_cache_peer_hostname2: 172.16.21.130
-squid_cache_peer_hostname3: 172.16.21.69
+squid_cache_peer_hostname1: proxy_padre1
+squid_cache_peer_hostname2: proxy_padre2
+squid_cache_peer_hostname3: proxy_padre3
 squid_cache_peer_type: parent
 squid_cache_peer_icpport: 0
 squid_cache_peer_options: no-query default round-robin no-digest weighted-round-robin
 
-# Defino camino para guardar los LOG interno
+# Defino camino para guardar los LOG
+# En la configuración se ve mucho más claro, se define este camino por que se van a separar
+# los log por ciudades, es decir será un solo proxy que brinde servicios a 14 ciudades o provincias
 squid_log_path: "/media/LOG"
 
 # Defino camino para mover los log a la nube
-squid_cloud_path: "/media/FILES/NEXTCLOUD/data/sandy/files/SALVAS/PROXY"
+squid_cloud_path: "/media/FILES/NEXTCLOUD/data/log_proxy/files/SALVAS/PROXY"
 
 # Defino ruta para cargar configuraciones extras
 squid_include_path: "/etc/squid/conf.d"
@@ -37,101 +41,15 @@ squid_include_path: "/etc/squid/conf.d"
 # Definir bloques IP por provincias
 # Esto es un diccionario
 squid_provincias:
-  gtm:
-    192.168.21.0/25
-    7.7.7.224/27
-    172.18.41.0/24
-    172.18.43.2
-    172.18.43.3
-  stg:
-    192.168.2.0/24
-    172.18.149.0/26
-    172.18.82.0/24
-    172.18.151.128/25
-    6.6.6.0/26
-  hlg:
-    10.4.100.0/24
-    10.4.107.0/24
-    10.4.101.0/24
-    10.4.103.0/24
-    172.18.94.0/24
-    6.6.6.64/26
-    172.18.97.0/24
-    10.4.102.0/24
-    172.18.95.0/24
-    172.18.124.48/29
-  grm:
-    10.28.2.0/24
-    10.28.3.0/24
-    10.28.4.0/24
-    10.28.6.0/24
-    10.28.5.0/24
-    172.18.59.0/24
-    172.19.9.80/29
-    172.18.104.0/24
-    172.18.40.0/24
-    6.6.6.240/28
-  ltu:
-    172.18.98.0/24
-    172.18.132.0/24
-    172.18.125.0/24
-    172.18.102.0/24
-    7.7.7.192/27
-  cmg:
-    7.7.7.32/27
-    172.18.68.0/23
-    172.18.119.0/26
-    172.16.21.195
-    172.18.30.0/26
-    7.7.7.2/32
-    172.16.21.195
-  cav:
-    6.6.6.192/28
-    10.29.100.0/24
-    172.18.73.0/24
-  ssp:
-    172.18.36.192/26
-  vcl:
-    10.10.100.0/24
-    172.18.206.144/28
-    172.18.206.160/28
-    6.6.6.128/27
-  cfg:
-    10.2.103.0/24
-    10.2.104.0/24
-    10.2.105.0/24
-    10.2.106.0/24
-    10.2.101.0/24
-    10.2.102.0/24
-    10.2.107.0/24
-    10.2.108.0/24
-    10.2.109.0/24
-    7.7.7.64/27
-    172.18.55.0/24
-  mtz:
-    10.6.100.0/24
-    192.168.30.0/24
-    172.18.51.0/24
-    192.168.10.0/24
-    10.92.14.240/29
-    10.90.41.0/24
-  enc:
-    172.18.122.0/24
-  pri:
-    172.18.47.0/24
-    172.18.58.0/24
-    172.18.115.0/24
-  isj:
-    172.18.39.0/25
-    172.19.2.0/29
+  cuidad_1:
+    x.x.x.x/24
+  ciudad_2:
+    y.y.y.y/24
 # ---------------------------------------------------------------------------------
-# Solo para proxy padre
+# Solo para proxy padre, definos los permisos de accesos
+# por supuesto que se pone solo el permiso de los proxy hijos
 squid_acl_padre:
-  - {name: 'nodo', type: 'src', arg: '172.16.21.0/24'}
-  - {name: 'villa_clara', type: 'src', arg: '172.18.61.0/24'}
-  - {name: 'mi_pc', type: 'src', arg: '172.18.68.17/32'}
+  - {name: 'proxy_hijo', type: 'src', arg: 'z.z.z.z/24'}
 squid_http_access_padre:
-  - {state: 'allow', acl: 'nodo'}
-  - {state: 'allow', acl: 'villa_clara'}
-  - {state: 'allow', acl: 'mi_pc'}
+  - {state: 'allow', acl: 'proxy_hijo'}
 ...
