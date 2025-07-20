@@ -18,7 +18,7 @@
           - log_provincias.yml
        loop_control:
           loop_var: items
-       when: inventory_hostname == "encc132.encc.cupet.cu"
+       when: inventory_hostname == "servidor_proxy"
 
 # Por defecto loop_var toma como valor la palabra "item"
 # si no se tiene que especificar, pues tampoco se tiene que definir.
