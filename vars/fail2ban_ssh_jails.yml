@@ -4,4 +4,4 @@ f2bsshport: "ssh"
 f2bsshfilter: "sshd"
 f2bsshmaxretry: 2
 f2bsshlogpath: '%(sshd_log)s'
-f2bsshignoreip: 172.16.21.0/24
+f2bsshignoreip: white_list
