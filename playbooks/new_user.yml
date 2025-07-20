@@ -1,12 +1,11 @@
 ---
-- name: Crear usuario local y configurar clave SSH
+- name: Crear usuario local para desplegar los playbooks remoto
   hosts: all
   become: true
   vars:
       user: ansible
 
   tasks:
-
       - name: Verificar usuario
         ansible.builtin.stat:
             path: "/home/{{ user }}"
@@ -28,9 +27,11 @@
 
       - name: "Generate SSH key for Ansible user"
         ansible.builtin.include_tasks: /etc/ansible/tasks/ssh_key.yml
-        when: ansible_hostname == "encc132"
-
-      - name: Transferir llaves
+        when: ansible_hostname == "servidor_ansible"
+        # Este when solo lo aplico al servidor donde esta instalado ansible
+        # que es el encargado de desplegar las llaves ssh a los server remoto
+   
+      - name: Transferir llaves si no existen
         ansible.builtin.stat:
             path: /home/{{ user }}/.ssh/authorized_keys
         register: transfer
@@ -38,14 +39,14 @@
       - name: No existen las llaves
         ansible.builtin.debug:
             msg: " *** no existen las llaves *** "
-        when: not transfer.stat.exists and ansible_hostname != "encc132"
+        when: not transfer.stat.exists 
 
       - name: Transferir llave publica a host remoto
         ansible.posix.authorized_key:
             user: "{{ user }}"
             state: present
             key: "{{ lookup('file', '/home/{{ user }}/.ssh/id_rsa.pub') }}"
-        when: not transfer.stat.exists and ansible_hostname != "encc132"
+        when: not transfer.stat.exists
 
       - name: Permiso sudo si existe usuario
         ansible.builtin.lineinfile:
