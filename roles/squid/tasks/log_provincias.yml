@@ -23,19 +23,7 @@
     group: proxy
     mode: '0755'
   loop:
-    - "{{ squid_log_path }}/gtm/gtm.log"
-    - "{{ squid_log_path }}/stg/stg.log"
-    - "{{ squid_log_path }}/hlg/hlg.log"
-    - "{{ squid_log_path }}/grm/grm.log"
-    - "{{ squid_log_path }}/ltu/ltu.log"
-    - "{{ squid_log_path }}/cmg/cmg.log"
-    - "{{ squid_log_path }}/cav/cav.log"
-    - "{{ squid_log_path }}/ssp/ssp.log"
-    - "{{ squid_log_path }}/vcl/vcl.log"
-    - "{{ squid_log_path }}/cfg/cfg.log"
-    - "{{ squid_log_path }}/mtz/mtz.log"
-    - "{{ squid_log_path }}/enc/enc.log"
-    - "{{ squid_log_path }}/pri/pri.log"
-    - "{{ squid_log_path }}/isj/isj.log"
+    - "{{ squid_log_path }}/ciudad_1/ciudad_1.log"
+    - "{{ squid_log_path }}/ciudad_1/ciudad_2.log"
   when: not item is exists
 ...
