@@ -12,25 +12,9 @@
     group: proxy
     mode: '0755'
   loop:
-    - "{{ squid_log_path }}/gtm"
-    - "{{ squid_log_path }}/stg"
-    - "{{ squid_log_path }}/hlg"
-    - "{{ squid_log_path }}/grm"
-    - "{{ squid_log_path }}/ltu"
-    - "{{ squid_log_path }}/cmg"
-    - "{{ squid_log_path }}/cav"
-    - "{{ squid_log_path }}/ssp"
-    - "{{ squid_log_path }}/vcl"
-    - "{{ squid_log_path }}/cfg"
-    - "{{ squid_log_path }}/mtz"
-    - "{{ squid_log_path }}/enc"
-    - "{{ squid_log_path }}/pri"
-    - "{{ squid_log_path }}/isj"
-
-# Ya creados los directorios, se crean los ficheros log
-# Seg'un la literatura es mejor usar loop que with_items
-# este ultimo es la versio'n vieja
-
+    - "{{ squid_log_path }}/ciudad_1"
+    - "{{ squid_log_path }}/ciudad_2"
+    
 - name: Crear si no existe fichero por provincias(LOG)
   ansible.builtin.file:
     path: "{{ item }}"
