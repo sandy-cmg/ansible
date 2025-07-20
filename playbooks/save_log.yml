@@ -1,26 +1,28 @@
 ---
-- name: Save log to nextcloud
-  hosts: all
+- name: Guardar log del squid en un nextcloud 
+hosts: all
   become: true
   gather_facts: false
 
   tasks:
-
      - name: Stop the service
        ansible.builtin.service:
           name: squid
           state: stopped
-       when: inventory_hostname == "encc132.encc.cupet.cu"
-
+       when: inventory_hostname == "servidor_squid"
+       # Por supuesto este servidor_squid debe estar definido
+       # en el inventario
+       
      - name: Copiar los log para nextcloud
        ansible.builtin.include_role:
           name: squid
           tasks_from: log_cloud.yml
-       when: inventory_hostname == "nextcloud.encc.cupet.cu"
+          # Aqui se especifica la tarea a correr
+       when: inventory_hostname == "servidor_nextcloud"
 
      - name: Start the service
        ansible.builtin.service:
           name: squid
           state: started
-       when: inventory_hostname == "encc132.encc.cupet.cu"
+       when: inventory_hostname == "servidor_squid"
 ...
